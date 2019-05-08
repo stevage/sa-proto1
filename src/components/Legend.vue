@@ -1,17 +1,23 @@
 <template lang="pug">
 #Legend
-    h4 Population
-    .bar
+    .population(v-show="population")
+        h4 Population
+        .bar
 </template>
 
 <script>
 export default {
     name: "Legend",
     data: () => ({
-        
+        population: true
     }),
     created() {
         window.Legend = this;
+    }, methods: {
+        toggle(layer, value) {
+            // this[layer] = value
+            this.population = !!value
+        }
     }
 }
 </script>

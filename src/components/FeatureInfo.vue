@@ -1,8 +1,18 @@
 <template lang="pug">
 #FeatureInfo
-    | {{ properties.PARENTNAME || properties.NAME_LABEL || properties }}
-    br
-    | {{ properties.FEATSUBTYPE }}
+    //- | {{ properties.PARENTNAME || properties.NAME_LABEL || properties }}
+    //- br
+    //- | {{ properties.FEATSUBTYPE }}
+    table
+        tr
+            th Name
+            td {{ properties.FacilityName }}
+        tr
+            th Sports
+            td {{ properties.SportsPlayed }}
+        tr(v-if="properties.NumberFieldCourts")
+            th Fields
+            td {{ properties.NumberFieldCourts }}
 </template>
 
 <script>

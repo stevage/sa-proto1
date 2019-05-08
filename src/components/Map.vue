@@ -19,6 +19,12 @@ export default {
         window.map = map;
         window.Map = this;
         map.on('load', () => init(map));
+    }, methods: {
+        toggleLayer(layer, value) {
+            if (layer === 'population') {
+                window.map.U.toggle('choropleth', value)
+            }
+        }
     }
 }
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -39,13 +45,32 @@ function init(map) {
         }
         
     }).addTo(map);
+    map.U.addGeoJSON('sport-and-rec', 'data/sport_and_rec.geojson');
+    map.U.addCircle('sport-and-rec-point', 'sport-and-rec', {
+        circleColor: 'green'
+    });
+    map.U.addSymbol('sport-and-rec-labels', 'sport-and-rec', {
+        textField: '{FacilityName}',
+        minzoom: 15,
+        textAnchor: 'left',
+        textOffset: [0.5,0],
+        textColor: 'green',
+        textJustify: 'left'
+    });
     map.U.addGeoJSON('vicmap-sport', 'data/vicmap_sports.geojson');
     map.U.addCircle('vicmap-sport-point', 'vicmap-sport', {
         circleColor: 'red'
     });
-    map.U.hoverPointer('vicmap-sport-point');
-    map.on('mouseover', 'vicmap-sport-point', e => {
+    // map.U.hoverPointer('vicmap-sport-point');
+    // map.on('mouseover', 'vicmap-sport-point', e => {
+    //     window.FeatureInfo.properties = e.features[0].properties
+    // });
+    map.U.hoverPointer('sport-and-rec-point');
+    map.on('mouseover', 'sport-and-rec-point', e => {
         window.FeatureInfo.properties = e.features[0].properties
+    });
+    map.on('click', 'sport-and-rec-point', e => {
+        console.log(e.features[0].properties);
     });
     
 }

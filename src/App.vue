@@ -5,7 +5,8 @@
         #middle
             #sidebar
                 h1 Prototype #1
-                | Hello                
+                | Hello    
+                LayerSelector            
             #map-container
                 Map
                 FeatureInfo
@@ -14,16 +15,17 @@
 </template>
 
 <script>
-import Map from './components/Map.vue'
-import FeatureInfo from './components/FeatureInfo.vue'
-import Legend from './components/Legend.vue'
-
+import Map from './components/Map.vue';
+import FeatureInfo from './components/FeatureInfo.vue';
+import Legend from './components/Legend.vue';
+import LayerSelector from './components/LayerSelector.vue';
 export default {
     name: 'app',
     components: {
       Map,
       FeatureInfo,
-      Legend
+      Legend,
+      LayerSelector
     }
 }
 </script>
