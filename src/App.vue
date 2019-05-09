@@ -26,9 +26,8 @@ export default {
       FeatureInfo,
       Legend,
       LayerSelector,
-      FacilityInfo
+      FacilityInfo,
     }, mounted() {
-        window.LayerSelector.population = false;
     }
 }
 </script>

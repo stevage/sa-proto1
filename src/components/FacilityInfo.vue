@@ -16,14 +16,19 @@
         tr(v-for="f in nearest")
             td.distance {{ Math.round(f._distance) }} km
             td {{f.properties.FacilityName}} 
+    Tools
             
 </template>
 
 <script>
 // import queryLngLat from 'query-remote-tiles';
+import Tools from './Tools.vue';
 const queryLngLat = require('query-remote-tiles').queryLngLat;
 export default {
     name: "FacilityInfo",
+    components: {
+        Tools
+    },
     data: () => ({
         facility: undefined,
         nearest: [],

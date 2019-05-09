@@ -11,10 +11,13 @@
     "@turf/turf": "^5.1.6",
     "axios": "^0.18.0",
     "cheap-ruler": "^2.5.1",
+    "es6-promisify": "^6.0.1",
     "geodist": "^0.2.1",
+    "isochrone": "^3.0.2",
     "mapbox-choropleth": "0.10.0",
     "mapbox-gl": "^0.52.0",
     "mapbox-gl-utils": "^0.24.0",
+    "mb-isochrone": "^0.1.0",
     "query-remote-tiles": "0.1.4",
     "vue": "^2.5.21"
   },

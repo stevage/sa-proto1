@@ -8,8 +8,12 @@ import U from 'mapbox-gl-utils';
 import MapboxChoropleth from 'mapbox-choropleth';
 import axios from 'axios';
 import geodist from 'geodist';
+const promisify = require('es6-promisify').promisify;
+(promisify);
+const isochrone = promisify(require('mb-isochrone'));
 // import circle from '@turf/turf';
 const circle = require('@turf/turf').circle;
+const voronoi = require('@turf/turf').voronoi;
 const ruler = require('cheap-ruler')(-30);
 export default {
     data: () => ({
@@ -35,18 +39,26 @@ export default {
     },
     methods: {
         toggleLayer(layer, value) {
-            if (layer === 'population') {
-                window.map.U.toggle('choropleth', value)
-            }
+            window.map.U.toggle(layer, value)
         }, nearestSimilar(facility) {
             return this.similarFacilities
                 .map(f => (f._distance = ruler.distance(facility.geometry.coordinates, f.geometry.coordinates), f))
                 .sort((a, b) => a._distance - b._distance)
                 .slice(1,6); // remove the provided facility from the list
+        }, updateTimeCatchment: async function () {
+            window.map.U.setData('time-catchment', { type: 'FeatureCollection', features: [] });
+            const iso = await isochrone(window.FacilityInfo.facility.geometry.coordinates, {
+                token: mapboxgl.accessToken,
+                threshold: [300, 600, 900],
+                direction: 'convergent',
+            });
+            window.map.U.setData('time-catchment', iso);
+
         }
+
     }
 }
-import 'mapbox-gl/dist/mapbox-gl.css';
+
 
 function setActiveSport(map, sport) {
     window.Map.activeSport = sport;
@@ -72,6 +84,23 @@ function setActiveSport(map, sport) {
 
 }
 
+function updateVoronoi(map) {
+    const v = voronoi(
+        { type: 'FeatureCollection', features: window.Map.similarFacilities},
+        { bbox: [141, -39, 150, -34] });
+    v.features = v.features.filter(Boolean);
+    map.U.setData('facility-voronoi', v);
+}
+
+function selectFacility(map, facility) {
+    window.FacilityInfo.facility = facility
+    console.log(facility.properties);
+    map.setFilter('facility-highlight', ['==', 'OBJECTID', facility.properties.OBJECTID]);
+    setActiveSport(map, facility.properties.SportsPlayed);
+    // updateTimeCatchment(facility.geometry.coordinates);
+    updateVoronoi(map);
+}
+
 function init(map) {
     map.U.addGeoJSON('sport-and-rec');
     map.U.addCircle('sport-and-rec-point', 'sport-and-rec', {
@@ -80,10 +109,17 @@ function init(map) {
         circleStrokeWidth: 1,
     });
     map.U.addGeoJSON('facility-catchment');
-    map.U.addLine('facility-catchment', 'facility-catchment', {
+    map.U.addLine('catchments', 'facility-catchment', {
         lineColor: 'green',
         lineOpacity:0.5,
         lineDasharray:[2,2]
+    });
+    map.U.addCircle('facility-highlight', 'sport-and-rec', {
+        circleColor: 'transparent',
+        circleStrokeColor: 'yellow',
+        circleStrokeWidth: 3,
+        circleRadius: 20,
+        filter: false
     });
     // map.U.addCircle('facility-catchment', 'sport-and-rec', {
     //     circleColor: 'hsla(150,80%,50%,0.2)',
@@ -93,7 +129,7 @@ function init(map) {
     //     filter: false
     // });
 
-map.U.addSymbol('sport-and-rec-labels', 'sport-and-rec', {
+    map.U.addSymbol('sport-and-rec-labels', 'sport-and-rec', {
         textField: '{FacilityName}',
         minzoom: 15,
         textAnchor: 'left',
@@ -115,6 +151,16 @@ map.U.addSymbol('sport-and-rec-labels', 'sport-and-rec', {
     //     circleColor: 'red'
     // });
 
+    map.U.addGeoJSON('time-catchment');
+    map.U.addFill('time-catchment', 'time-catchment', {
+        fillColor: 'hsla(240,90%,30%,0.2)'
+    });
+
+    map.U.addGeoJSON('facility-voronoi');
+    map.U.addLine('facilityVoronoi', 'facility-voronoi', {
+        lineColor: '#333'
+    });
+
     const c = new MapboxChoropleth({
         tableUrl: 'data/dwelling_structure.csv',
         tableNumericField: 'Total selected',
@@ -129,10 +175,13 @@ map.U.addSymbol('sport-and-rec-labels', 'sport-and-rec', {
             'fill-opacity': 0.3
         }, layout: {
             visibility: 'none'
-        }, before: 'sport-and-rec-point'
+        }, 
+        before: 'sport-and-rec-point',
+        layerId: 'population'
         
     }).addTo(map);
 
+    // map.add
 
 // map.U.hoverPointer('vicmap-sport-point');
     // map.on('mouseover', 'vicmap-sport-point', e => {
@@ -146,13 +195,15 @@ map.U.addSymbol('sport-and-rec-labels', 'sport-and-rec', {
         window.FeatureInfo.properties = undefined
     });
     map.on('click', 'sport-and-rec-point', e => {
-        window.FacilityInfo.facility = e.features[0]
-        console.log(e.features[0].properties);
-        setActiveSport(map, e.features[0].properties.SportsPlayed);
+        selectFacility(map, e.features[0]);
     });
+
+    window.LayerSelector.population = false;
+    window.LayerSelector.catchments = false;
     
 }
 
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 </script>
 
