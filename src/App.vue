@@ -1,11 +1,10 @@
 <template lang="pug">
     #app
         #top
-            h1 SportAus Data Platform
+            h1 SportAus Data Platform Prototype #1
         #middle
             #sidebar
-                h1 Prototype #1
-                | Hello    
+                FacilityInfo
                 LayerSelector            
             #map-container
                 Map
@@ -19,13 +18,17 @@ import Map from './components/Map.vue';
 import FeatureInfo from './components/FeatureInfo.vue';
 import Legend from './components/Legend.vue';
 import LayerSelector from './components/LayerSelector.vue';
+import FacilityInfo from './components/FacilityInfo.vue';
 export default {
     name: 'app',
     components: {
       Map,
       FeatureInfo,
       Legend,
-      LayerSelector
+      LayerSelector,
+      FacilityInfo
+    }, mounted() {
+        window.LayerSelector.population = false;
     }
 }
 </script>
@@ -69,7 +72,7 @@ html, body {
 }
 
 #bottom {
-    flex-basis: 50px;
+    flex-basis: 0px;
     border-top: 1px solid lightgrey;
 }
 

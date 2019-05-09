@@ -17,8 +17,8 @@ export default {
     },
     watch: {
         population() {
-            window.Map.toggleLayer('population', this.population);
             window.Legend.toggle('population', this.population);
+            window.Map.toggleLayer('population', this.population);
         }
     }
 }

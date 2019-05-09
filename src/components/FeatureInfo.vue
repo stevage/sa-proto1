@@ -1,5 +1,5 @@
 <template lang="pug">
-#FeatureInfo
+#FeatureInfo(v-if="properties")
     //- | {{ properties.PARENTNAME || properties.NAME_LABEL || properties }}
     //- br
     //- | {{ properties.FEATSUBTYPE }}
@@ -19,7 +19,7 @@
 export default {
     name: "FeatureInfo",
     data: () => ({
-        properties: {}
+        properties: undefined
         
     }),
     created() {
@@ -31,10 +31,12 @@ export default {
 <style scoped>
 #FeatureInfo {
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 10px;
+    left: 10px;
     background:white;
     width:200px;
-    height:200px;
+    border: 1px solid lightgrey;
+    font-size: 12px;
+    /* height:200px; */
 }
 </style>
