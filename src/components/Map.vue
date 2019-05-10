@@ -112,7 +112,8 @@ function init(map) {
     map.U.addLine('catchments', 'facility-catchment', {
         lineColor: 'green',
         lineOpacity:0.5,
-        lineDasharray:[2,2]
+        lineDasharray:[2,2],
+        visibility: 'none'
     });
     map.U.addCircle('facility-highlight', 'sport-and-rec', {
         circleColor: 'transparent',
@@ -158,7 +159,8 @@ function init(map) {
 
     map.U.addGeoJSON('facility-voronoi');
     map.U.addLine('facilityVoronoi', 'facility-voronoi', {
-        lineColor: '#333'
+        lineColor: '#333',
+        visibility: 'none'
     });
 
     const c = new MapboxChoropleth({
