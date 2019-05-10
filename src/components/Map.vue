@@ -189,6 +189,12 @@ function init(map) {
         visibility: 'none'
     });
 
+    map.U.addVector('lga', 'https://vector-tiles.terria.io/FID_LGA_2011_AUST/{z}/{x}/{y}.pbf');
+    map.U.addLine('lga', 'lga', {
+        lineColor: 'orange',
+        sourceLayer: 'FID_LGA_2011_AUST'
+    });
+
     const c = new MapboxChoropleth({
         tableUrl: 'data/dwelling_structure.csv',
         tableNumericField: 'Total selected',

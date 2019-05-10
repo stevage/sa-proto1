@@ -10,6 +10,9 @@
     label
         input(type="checkbox" v-model="layers.facilityVoronoi")
         | Facility voronoi polygons
+    label
+        input(type="checkbox" v-model="layers.lga")
+        | Local government areas
 </template>
 
 <script>
