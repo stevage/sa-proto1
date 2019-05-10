@@ -47,13 +47,39 @@ export default {
                 .slice(1,6); // remove the provided facility from the list
         }, updateTimeCatchment: async function () {
             window.map.U.setData('time-catchment', { type: 'FeatureCollection', features: [] });
-            const iso = await isochrone(window.FacilityInfo.facility.geometry.coordinates, {
-                token: mapboxgl.accessToken,
-                threshold: [300, 600, 900],
-                direction: 'convergent',
-            });
+            let iso;
+            const coords = window.FacilityInfo.facility.geometry.coordinates;
+            if (false) {
+                iso = await isochrone(coords, {
+                    token: mapboxgl.accessToken,
+                    threshold: [300, 600, 900],
+                    direction: 'convergent',
+                });
+            } else {
+                const result = await axios.get(`https://api.mapbox.com/isochrone/v1/mapbox/driving/${coords}`,
+                {
+                    params: {
+                        contours_minutes: '5,10,15',
+                        access_token: mapboxgl.accessToken,
+                        polygons: true,
+                        denoise: 0.5
+
+                    }
+                });
+                iso = result.data;
+
+
+            }
             window.map.U.setData('time-catchment', iso);
 
+        }, filterBySport(sport) {
+            if (sport) {
+                window.map.setFilter('sport-and-rec-point', ['==', 'SportsPlayed', sport])
+            } else {
+                window.map.setFilter('sport-and-rec-point', true)
+            }
+        }, filterByNotSport(sports) {
+            window.map.setFilter('sport-and-rec-point', ['!in', 'SportsPlayed', ...sports])
         }
 
     }

@@ -5,6 +5,7 @@
         #middle
             #sidebar
                 FacilityInfo
+                SportSelector
                 LayerSelector            
             #map-container
                 Map
@@ -19,6 +20,7 @@ import FeatureInfo from './components/FeatureInfo.vue';
 import Legend from './components/Legend.vue';
 import LayerSelector from './components/LayerSelector.vue';
 import FacilityInfo from './components/FacilityInfo.vue';
+import SportSelector from './components/SportSelector.vue';
 export default {
     name: 'app',
     components: {
@@ -27,6 +29,7 @@ export default {
       Legend,
       LayerSelector,
       FacilityInfo,
+      SportSelector
     }, mounted() {
     }
 }

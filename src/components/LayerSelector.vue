@@ -1,6 +1,6 @@
 <template lang="pug">
 #LayerSelector
-    h2 Layers
+    h3 Layers
     label
         input(type="checkbox" v-model="layers.population")
         | Population
