@@ -4,8 +4,8 @@
             h1 SportAus Data Platform Prototype #1
         #middle
             #sidebar
-                FacilityInfo
                 SportSelector
+                FacilityInfo
                 LayerSelector            
             #map-container
                 Map

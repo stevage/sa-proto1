@@ -13,6 +13,9 @@
     label
         input(type="checkbox" v-model="layers.lga")
         | Local government areas
+    label
+        input(type="checkbox" v-model="layers.poa")
+        | Postcodes
 </template>
 
 <script>
@@ -24,11 +27,6 @@ export default {
     }),
     created() {
         window.LayerSelector = this;
-    },
-    methods: {
-        toggle(layer) {
-
-        }
     },
     watch: {
         layers: {

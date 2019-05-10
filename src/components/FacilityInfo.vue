@@ -11,11 +11,11 @@
         tr
             th LGA
             td {{ lga }}
-    h4 Nearest {{ p.SportsPlayed }} facilities
-    table
-        tr(v-for="f in nearest")
-            td.distance {{ Math.round(f._distance) }} km
-            td {{f.properties.FacilityName}} 
+    //- h4 Nearest {{ p.SportsPlayed }} facilities
+    //- table
+    //-     tr(v-for="f in nearest")
+    //-         td.distance {{ Math.round(f._distance) }} km
+    //-         td {{f.properties.FacilityName}} 
     Tools
             
 </template>

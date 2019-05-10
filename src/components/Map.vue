@@ -7,10 +7,8 @@ import mapboxgl from 'mapbox-gl';
 import U from 'mapbox-gl-utils';
 import MapboxChoropleth from 'mapbox-choropleth';
 import axios from 'axios';
-import geodist from 'geodist';
-const promisify = require('es6-promisify').promisify;
-(promisify);
-const isochrone = promisify(require('mb-isochrone'));
+// const promisify = require('es6-promisify').promisify;
+// const isochrone = promisify(require('mb-isochrone'));
 // import circle from '@turf/turf';
 const circle = require('@turf/turf').circle;
 const voronoi = require('@turf/turf').voronoi;
@@ -34,7 +32,8 @@ export default {
         map.on('load', () => init(map));
     }, computed: {
         similarFacilities() {
-            return this.facilities.features.filter(f => f.properties.SportsPlayed === this.activeSport)
+            return this.facilities.features.filter(f => 
+                f.properties.SportsPlayed === this.activeSport && f !== window.FacilityInfo.facility)
         }
     },
     methods: {
@@ -59,10 +58,10 @@ export default {
                 const result = await axios.get(`https://api.mapbox.com/isochrone/v1/mapbox/driving/${coords}`,
                 {
                     params: {
-                        contours_minutes: '5,10,15',
+                        contours_minutes: '10,20,30',
                         access_token: mapboxgl.accessToken,
                         polygons: true,
-                        denoise: 0.5
+                        denoise: 1
 
                     }
                 });
@@ -71,10 +70,12 @@ export default {
 
             }
             window.map.U.setData('time-catchment', iso);
+            window.FacilityCounts.isochrone = iso;
+            
 
         }, filterBySport(sport) {
             if (sport) {
-                window.map.setFilter('sport-and-rec-point', ['==', 'SportsPlayed', sport])
+                window.map.setFilter('sport-and-rec-point', ['==', 'SportsPlayed', sport]);
             } else {
                 window.map.setFilter('sport-and-rec-point', true)
             }
@@ -125,6 +126,7 @@ function selectFacility(map, facility) {
     setActiveSport(map, facility.properties.SportsPlayed);
     // updateTimeCatchment(facility.geometry.coordinates);
     updateVoronoi(map);
+    window.FacilityCounts.isochrone = undefined;
 }
 
 function init(map) {
@@ -164,11 +166,11 @@ function init(map) {
         textColor: 'green',
         textJustify: 'left'
     });
-    map.U.addGeoJSON('vicmap-sport');
-    axios.get('data/vicmap_sports.geojson')
-        .then(result => {
-            map.U.setData('vicmap-sport', result.data)
-        });
+    // map.U.addGeoJSON('vicmap-sport');
+    // axios.get('data/vicmap_sports.geojson')
+    //     .then(result => {
+    //         map.U.setData('vicmap-sport', result.data)
+    //     });
     axios.get('data/sport_and_rec.geojson')
         .then(result => {
             window.Map.facilities = result.data;
@@ -192,7 +194,20 @@ function init(map) {
     map.U.addVector('lga', 'https://vector-tiles.terria.io/FID_LGA_2011_AUST/{z}/{x}/{y}.pbf');
     map.U.addLine('lga', 'lga', {
         lineColor: 'orange',
-        sourceLayer: 'FID_LGA_2011_AUST'
+        sourceLayer: 'FID_LGA_2011_AUST',
+        visibility: 'none'
+    });
+    //map.U.addVector('poa', 'https://vector-tiles.terria.io/FID_POA_2011_AUST/{z}/{x}/{y}.pbf');
+    map.addSource('poa', {
+        type: "vector",
+        tiles: ['https://vector-tiles.terria.io/FID_POA_2011_AUST/{z}/{x}/{y}.pbf'],
+        maxzoom: 12,
+    });
+    map.U.addLine('poa', 'poa', {
+        lineColor: 'hsla(0,80%,80%,0.5)',
+        lineWidth: { stops: [[12, 3],[17, 10]]},
+        sourceLayer: 'FID_POA_2011_AUST',
+        visibility: 'none'
     });
 
     const c = new MapboxChoropleth({

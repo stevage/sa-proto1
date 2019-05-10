@@ -1,12 +1,17 @@
 <template lang="pug">
 #Tools
     h3 Tools
-    button(@click="showTimeCatchment") Show driving catchment
+    button(@click="showTimeCatchment") Find alternative facilities
+    FacilityCounts
 </template>
 
 <script>
+import FacilityCounts from './FacilityCounts';
 export default {
     name: "Tools",
+    components: {
+        FacilityCounts
+    },
     data: () => ({
         
     }),
